@@ -1,11 +1,8 @@
-import { useHistory } from "react-router-dom";
-
-import profile from "../../image/icon/profile.png";
-import phone1 from "../../image/template/blank.png";
+import profile from "../../../image/icon/profile.png";
+import phone1 from "../../../image/template/blank.png";
 
 const Template = ({ file, form, formLinks }) => {
   const { title, description } = form;
-  const route = useHistory();
   return (
     <div className="row">
       <div className="col">

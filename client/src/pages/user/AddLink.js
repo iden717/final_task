@@ -1,14 +1,14 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery } from "react-query";
+import { useHistory } from "react-router";
 import AddNewLink from "../../components/card/AddNewLink";
 import { API } from "../../config/api";
-import { LinkContext } from "../../context/linkContext";
 
 import profile from "../../image/icon/profile.png";
-import Template from "../template/Template";
+import Template from "../template/mockup/Template";
 
 const AddLink = () => {
-  const [state, dispatch] = useContext(LinkContext);
+  const route = useHistory();
   const [file, setFile] = useState({ file: null });
   const [form, setForm] = useState({
     title: "",
@@ -62,7 +62,6 @@ const AddLink = () => {
     form.links.map((i, key) => {
       addLinks.mutate(addUnique[key]);
     });
-    // refectchData();
   });
 
   const addLinks = useMutation(async (data) => {
@@ -81,6 +80,9 @@ const AddLink = () => {
     };
 
     await API.post("/links", body, config);
+    refectchData();
+
+    route.push("/short-list");
   });
 
   const onChangeLink = (e, id) => {

@@ -21,7 +21,7 @@ route.get("/check-auth", checkAuth, getCheckAuth);
 
 route.get("/brands", checkAuth, getBrands);
 route.post("/brand", checkAuth, uploadFile("image"), addBrand);
-route.get("/brand/:id", checkAuth, getDetailBrand);
+route.get("/brand/:id", getDetailBrand);
 route.delete("/brand/:id", checkAuth, deleteBrand);
 
 route.post("/links", checkAuth, uploadFile("image"), addLink);

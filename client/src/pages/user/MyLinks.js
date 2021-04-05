@@ -88,7 +88,7 @@ const ShortList = () => {
           <div className="col-md-11">
             {ShortData?.data?.data?.links?.map((short) => (
               <div>
-                <CardShort key={short.id} onShow={handleShow} />
+                <CardShort short={short} key={short.id} onShow={handleShow} />
                 <ConfirmAlert
                   setShow={confirmShow}
                   deleteById={deleteShortById}
@@ -102,19 +102,6 @@ const ShortList = () => {
         </div>
       </div>
     </div>
-    // <div className="container mt-5 mb-5">
-    //   <div className="d-flex justify-content-center">
-    //     <div className="col-md-10">
-    //       {ShortData?.data?.data?.shortlinks?.map((short) => (
-    //         <CardShort
-    //           short={short}
-    //           key={short.id}
-    //           deleteShort={deleteShortById}
-    //         />
-    //       ))}
-    //     </div>
-    //   </div>
-    // </div>
   );
 };
 

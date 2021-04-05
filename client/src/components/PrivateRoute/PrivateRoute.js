@@ -1,4 +1,4 @@
-import { faCubes, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext } from "react";
 import { Nav, Navbar } from "react-bootstrap";
@@ -8,8 +8,12 @@ import { UserContext } from "../../context/userContext";
 import HeaderUser from "../header/HeaderUser";
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-  const [state] = useContext(UserContext);
-  console.log("ini private", state?.isLogin);
+  const [state, dispatch] = useContext(UserContext);
+  const logout = () => {
+    dispatch({
+      type: "LOGOUT",
+    });
+  };
   return (
     <Route
       {...rest}
@@ -32,7 +36,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
                       className="flex-column font-header"
                       style={{ width: "100%" }}
                     >
-                      <Nav.Item className="mb-4">
+                      <Nav.Item className="mb-4" onClick={logout}>
                         <Nav.Link as={Link} to="/template">
                           <FontAwesomeIcon
                             icon={faSignOutAlt}

@@ -50,23 +50,41 @@ exports.getDetailBrand = async (req, res) => {
     const links = await Brand.findOne({
       include: {
         model: Link,
-        as: "link",
+        as: "links",
         attributes: {
-          exclude: ["createdAt", "updatedAt", "listLinkId", "listLinkId"],
+          exclude: ["createdAt", "updatedAt"],
         },
       },
       attributes: {
         exclude: ["createdAt", "updatedAt", "userId"],
       },
       where: {
-        [Op.and]: [{ uniqueLink: id }, { userId: req.userId.id }],
+        uniqueLink: id,
       },
     });
+
+    if (!links)
+      return res.status(404).send({
+        status: "error",
+        message: "Page not found",
+      });
+
+    const stringLink = JSON.stringify(links);
+    const objectLink = JSON.parse(stringLink);
+
+    const oneLink = {
+      ...objectLink,
+      image: objectLink?.image ? URL + objectLink?.image : null,
+      links: objectLink?.links.map((data) => ({
+        ...data,
+        image: data?.image ? URL + data?.image : null,
+      })),
+    };
 
     res.send({
       status: "success",
       data: {
-        link,
+        link: oneLink,
       },
     });
   } catch (error) {

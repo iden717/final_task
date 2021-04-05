@@ -1,7 +1,16 @@
+import { useContext } from "react";
+import { useHistory } from "react-router";
+import { UserContext } from "../context/userContext";
 import img from "../image/PC.png";
 import phone from "../image/Phone.png";
 
 const Home = () => {
+  const route = useHistory();
+  const [state] = useContext(UserContext);
+
+  if (state?.isLogin) {
+    route.push("/template");
+  }
   return (
     <div className="container-fluid mt-5 p-5 pt-5 pb-5">
       <div className="row mt-5">
