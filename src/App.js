@@ -32,6 +32,7 @@ if (localStorage.token) {
 }
 
 function App() {
+  console.log("env", process.env);
   const pink = useHistory();
   const [state, dispatch] = useContext(UserContext);
   const checkUser = async () => {
