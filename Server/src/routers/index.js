@@ -7,6 +7,8 @@ const {
   getDetailBrand,
   deleteBrand,
   addLink,
+  editBrand,
+  editLink,
 } = require("../controllers/shortlink");
 
 const { updateUser, deleteUser } = require("../controllers/user");
@@ -23,7 +25,9 @@ route.get("/brands", checkAuth, getBrands);
 route.post("/brand", checkAuth, uploadFile("image"), addBrand);
 route.get("/brand/:id", getDetailBrand);
 route.delete("/brand/:id", checkAuth, deleteBrand);
+route.patch("/brand/:id", checkAuth, uploadFile("image"), editBrand);
 
+route.patch("/link/:id", checkAuth, uploadFile("image"), editLink);
 route.post("/links", checkAuth, uploadFile("image"), addLink);
 
 route.patch("/user", checkAuth, updateUser);

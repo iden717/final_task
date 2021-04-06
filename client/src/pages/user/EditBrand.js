@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
-import { useHistory } from "react-router";
+import { useHistory, useParams } from "react-router";
 import AddNewLink from "../../components/card/AddNewLink";
 import { API } from "../../config/api";
 
 import profile from "../../image/icon/profile.png";
 import Template from "../template/mockup/Template";
 
-const AddLink = () => {
+const EditBrand = () => {
+  const params = useParams();
+  const { id } = params;
   const route = useHistory();
+
   const [file, setFile] = useState({ file: null });
   const [form, setForm] = useState({
     title: "",
@@ -27,15 +30,17 @@ const AddLink = () => {
 
   const { title, description, image } = form;
 
-  const { data: ShortData, refetch: refectchData } = useQuery(
-    "shortListCache",
-    async () => {
-      const response = await API.get("/brands");
-      return response;
-    }
-  );
+  const {
+    data: ShortData,
+    refetch: refectchData,
+    isLoading: shortLoading,
+  } = useQuery("editBrand", async () => {
+    const response = await API.get(`/brand/${id}`);
 
-  const addBrand = useMutation(async () => {
+    return response;
+  });
+
+  const editBrand = useMutation(async () => {
     const { title, description, image } = form;
     const body = new FormData();
 
@@ -49,7 +54,7 @@ const AddLink = () => {
       },
     };
 
-    const response = await API.post("/brand", body, config);
+    const response = await API.patch(`/brand/${id}`, body, config);
     const uniqueBrand = response?.data?.data?.link?.uniqueLink;
 
     const addUnique = form.links.map((data) => {
@@ -58,10 +63,41 @@ const AddLink = () => {
         uniqueBrand,
       };
     });
+    const numberDB = ShortData?.data?.data?.link?.links?.length;
+    const additionalShortNumber = addUnique.length - numberDB;
 
-    form.links.map((i, key) => {
-      addLinks.mutate(addUnique[key]);
-    });
+    console.log("number", additionalShortNumber);
+
+    if (additionalShortNumber > 0) {
+      for (let i = 0; i < additionalShortNumber; i++) {
+        addLinks.mutate(addUnique[i + numberDB]);
+      }
+    } else {
+      form.links.map((i, key) => {
+        editLinks.mutate(addUnique[key]);
+      });
+    }
+  });
+
+  const editLinks = useMutation(async (data) => {
+    const { id, title, url, image, uniqueBrand } = data;
+    const body = new FormData();
+
+    body.append("title", title);
+    body.append("url", url);
+    body.append("image", image);
+    body.append("uniqueBrand", uniqueBrand);
+
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+    await API.patch(`/link/${id}`, body, config);
+    refectchData();
+
+    route.push("/short-list");
   });
 
   const addLinks = useMutation(async (data) => {
@@ -138,7 +174,31 @@ const AddLink = () => {
       links: [...form.links, { id: form.links.length + 1 }],
     });
   };
-  console.log("ini state", form);
+
+  const setFormByDb = () => {
+    var imageUrl = ShortData?.data?.data?.link?.image?.split("/")[4];
+
+    if (!shortLoading) {
+      setFile({ file: ShortData?.data?.data?.link?.image });
+      setForm({
+        ...ShortData?.data?.data?.link,
+        image: imageUrl,
+        links: ShortData?.data?.data?.link?.links?.map((data) => ({
+          ...data,
+          image: data?.image?.split("/")[4],
+          previewImg: data?.image,
+        })),
+      });
+    }
+  };
+
+  useEffect(() => {
+    setFormByDb();
+  }, []);
+
+  console.log(" ini short", ShortData);
+  console.log("ini state", shortLoading);
+  console.log("ini form", form);
   return (
     <div className="">
       <div className="row bg-light p-3 header">
@@ -149,7 +209,7 @@ const AddLink = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          addBrand.mutate();
+          editBrand.mutate();
         }}
       >
         <div className="">
@@ -159,7 +219,7 @@ const AddLink = () => {
             </div>
             <div className="col-md-2 d-flex justify-content-end">
               <button type="submit" className="font-weight-bold btn btn-app">
-                Publish Link
+                Saved
               </button>
             </div>
           </div>
@@ -244,4 +304,4 @@ const AddLink = () => {
   );
 };
 
-export default AddLink;
+export default EditBrand;

@@ -2,7 +2,7 @@ import profile from "../../../image/icon/profile.png";
 import phone1 from "../../../image/template/blank.png";
 
 const Template = ({ file, form, formLinks }) => {
-  const { title, description } = form;
+  const { title, description, image } = form;
   return (
     <div className="row">
       <div className="col">
@@ -35,7 +35,13 @@ const Template = ({ file, form, formLinks }) => {
                 <div className="row">
                   <div className="col-1 ml-2">
                     <img
-                      src={i.previewImg ? i.previewImg : profile}
+                      src={
+                        i.previewImg
+                          ? i.previewImg
+                          : i.image
+                          ? i.image
+                          : profile
+                      }
                       className="rounded-circle d-flex justify-content-start mt-1 mb-1"
                       style={{
                         width: "24px",

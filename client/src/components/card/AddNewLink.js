@@ -1,6 +1,7 @@
 import profile from "../../image/icon/profile.png";
 
 const AddNewLink = ({ file, onChangeLink, changeImgLink, data }) => {
+  const { title, url, image } = data;
   return (
     <div className="card shadow mt-5 mb-4">
       <div className="card-body">
@@ -14,7 +15,13 @@ const AddNewLink = ({ file, onChangeLink, changeImgLink, data }) => {
                 <div className="mt-4">
                   <div class="mb-3">
                     <img
-                      src={data.previewImg ? data.previewImg : profile}
+                      src={
+                        data.previewImg
+                          ? data.previewImg
+                          : image
+                          ? image
+                          : profile
+                      }
                       style={{
                         width: "100%",
                         objectFit: "cover",
@@ -29,8 +36,8 @@ const AddNewLink = ({ file, onChangeLink, changeImgLink, data }) => {
                         type="file"
                         name="image"
                         onChange={(e) => {
-                          onChangeLink(e, data.unique);
-                          changeImgLink(e, data.unique);
+                          onChangeLink(e, data.id);
+                          changeImgLink(e, data.id);
                         }}
                       />
                       Upload
@@ -44,7 +51,8 @@ const AddNewLink = ({ file, onChangeLink, changeImgLink, data }) => {
                   <input
                     type="text"
                     name="title"
-                    onChange={(e) => onChangeLink(e, data.unique)}
+                    value={title}
+                    onChange={(e) => onChangeLink(e, data.id)}
                     className="form-control input-dashboard form-control-lg ms-2"
                     placeholder="Your Title"
                   />
@@ -54,7 +62,8 @@ const AddNewLink = ({ file, onChangeLink, changeImgLink, data }) => {
                   <input
                     type="text"
                     name="url"
-                    onChange={(e) => onChangeLink(e, data.unique)}
+                    value={url}
+                    onChange={(e) => onChangeLink(e, data.id)}
                     className="form-control input-dashboard form-control-lg ms-2"
                     placeholder="Your Url"
                   />

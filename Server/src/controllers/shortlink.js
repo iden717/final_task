@@ -95,6 +95,149 @@ exports.getDetailBrand = async (req, res) => {
     });
   }
 };
+exports.editBrand = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const schema = Joi.object({
+      title: Joi.string().min(5).max(50),
+      description: Joi.string().min(5).max(50),
+      image: Joi.allow(),
+    });
+
+    const { error } = await schema.validate(req.body);
+
+    if (error)
+      return res.status(400).send({
+        status: "validation failed",
+        message: error.details[0].message,
+      });
+
+    const checkUser = await Brand.findOne({
+      where: {
+        uniqueLink: id,
+      },
+    });
+
+    if (req.userId.id === checkUser.userId) {
+      const Createlink = await Brand.update(
+        {
+          ...req.body,
+          image: req.files.image ? req.files.image[0].filename : req.body.image,
+        },
+        {
+          where: {
+            [Op.and]: [{ userId: req.userId.id }, { uniqueLink: id }],
+          },
+        }
+      );
+
+      if (!Createlink)
+        return res.status(500).send({
+          status: "failed",
+          message: "Failed update",
+        });
+    } else {
+      return res.status(401).send({
+        status: "failed",
+        message: "You haven't authorization to edit this product.",
+      });
+    }
+
+    const findBrand = await Brand.findOne({
+      attributes: {
+        exclude: ["updatedAt", "createdAt", "userId"],
+      },
+      where: {
+        uniqueLink: id,
+      },
+    });
+
+    const brandString = JSON.stringify(findBrand);
+    const brandObject = JSON.parse(brandString);
+
+    const brandFinal = {
+      ...brandObject,
+      image: brandObject.image ? URL + brandObject.image : null,
+    };
+
+    res.send({
+      status: "success",
+      data: {
+        link: brandFinal,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: "error",
+      message: "Server Error",
+    });
+  }
+};
+
+exports.editLink = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const schema = Joi.object({
+      title: Joi.string().min(5).max(50),
+      url: Joi.string().min(5).max(50),
+      uniqueBrand: Joi.string().min(3).max(15),
+      image: Joi.allow(),
+    });
+
+    const { error } = await schema.validate(req.body);
+
+    if (error)
+      return res.status(400).send({
+        status: "validation failed",
+        message: error.details[0].message,
+      });
+
+    const createLink = await Link.update(
+      {
+        ...req.body,
+        image: req.files.image ? req.files.image[0].filename : req.body.image,
+      },
+      {
+        where: {
+          [Op.and]: [{ uniqueBrand: req.body.uniqueBrand }, { id }],
+        },
+      }
+    );
+
+    const findBrand = await Brand.findOne({
+      include: {
+        model: Link,
+        as: "links",
+        attributes: {
+          exclude: ["updatedAt", "createdAt", "userId"],
+        },
+      },
+      attributes: {
+        exclude: ["updatedAt", "createdAt", "userId"],
+      },
+      where: {
+        uniqueLink: req.body.uniqueBrand,
+      },
+    });
+
+    res.send({
+      status: "success",
+      data: {
+        link: findBrand,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      status: "error",
+      message: "Server Error",
+    });
+  }
+};
+
 exports.addBrand = async (req, res) => {
   try {
     const schema = Joi.object({

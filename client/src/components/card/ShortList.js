@@ -56,6 +56,7 @@ function ShortList({ short, onShow }) {
                 <FontAwesomeIcon icon={faEye} s />
               </button>
               <button
+                onClick={() => route.push(`/edit/brand/${uniqueLink}`)}
                 type="submit"
                 className="btn btn-lg btn-app-icon mr-4"
                 style={{ width: "70px" }}

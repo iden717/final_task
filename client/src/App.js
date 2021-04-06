@@ -25,6 +25,7 @@ import Profile from "./pages/user/Profile";
 
 import "./styles/master.css";
 import Loading from "./components/loading/Loading";
+import EditBrand from "./pages/user/EditBrand";
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
@@ -73,6 +74,7 @@ function App() {
           <PrivateRoute exact path="/template" component={TemplateMockup} />
           <PrivateRoute exact path="/short-list" component={MyLinks} />
           <PrivateRoute exact path="/profile" component={Profile} />
+          <PrivateRoute exact path="/edit/brand/:id" component={EditBrand} />
           <Route exact path="/:id" component={TemplatePublish} />
         </Switch>
       </Router>
