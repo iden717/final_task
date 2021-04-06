@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const API = axios.create({
-  baseURL: "http://localhost:5000/api/v1",
+  baseURL: process.env.URL + process.env.API_VERSION,
 });
 
 export const setAuthToken = (token) => {
